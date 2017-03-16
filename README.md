@@ -40,13 +40,13 @@ With activated virtual enivornment run: `pip install -r require.txt`
 You are now ready to run the application.
 
 #### Windows
-With activated virtual enivornment run: `pip install -r require_win.txt`
+With activated virtual enivornment run: `pip install -r require_win.txt`.
 Unfortunately, for Windows there are currently no official precompiled 
 numpy+mkl and SciPy packages so they need to be installed manually. 
 Please download unnoficial wheel package for 
-[numpy 1.11.3]{http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy}
+[numpy 1.11.3](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 and
-[scipy 0.19.0]{http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy}
+[scipy 0.19.0](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
 for your version of Windows and Python (e.g. 
 `scipy-0.19.0-cp35-cp35m-win_amd64.whl` for Windows x64 and Python 3.5).
 Place the files inside project folder and install them individually 
