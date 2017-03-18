@@ -3,7 +3,13 @@ SRCDIR = src
 INCDIR = inc
 OUTDIR = build
 
-ZPO_OBJ = $(addprefix $(OBJDIR)/, main.o)
+ZPO_OBJ = $(addprefix $(OBJDIR)/, \
+	grayscale_image.o \
+	histogram_base.o \
+	full_histogram.o \
+	undersampled_histogram.o \
+	evaluator.o \
+	main.o)
 	
 CC = g++
 # Executable flags
