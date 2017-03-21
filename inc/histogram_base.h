@@ -10,19 +10,18 @@ public:
 
     virtual ~HistogramBase() = default;
 
-    virtual void compute(const GrayscaleImage& img) = 0;
+    virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr) = 0;
 
-    int bin(int bin_idx) const;
+    double bin(int bin_idx) const;
     int used_samples() const;
-    int samples() const;
+    double total_probabilities() const;
     std::string to_string() const;
 
 protected:
     void clear_data();
-    virtual void scale_up(int samples_count);
 
     int _used_samples;
-    int _data[size];
+    double _data[size];
 };
 
 #endif

@@ -9,7 +9,9 @@ ZPO_OBJ = $(addprefix $(OBJDIR)/, \
 	full_histogram.o \
 	undersampled_histogram.o \
 	evaluator.o \
-	main.o)
+	main_ivan.o \
+	main_marek.o \
+	main_matej.o)
 	
 CC = g++
 # Executable flags

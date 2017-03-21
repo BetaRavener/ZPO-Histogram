@@ -6,12 +6,12 @@
 class UndersampledHistogram : public HistogramBase
 {
 public:
-    UndersampledHistogram(int skip=2);
+    UndersampledHistogram(int step=2);
     virtual ~UndersampledHistogram() = default;
 
-    virtual void compute(const GrayscaleImage& img);
+    virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
 private:
-    int _skip;
+    int _step;
 };
 
 #endif

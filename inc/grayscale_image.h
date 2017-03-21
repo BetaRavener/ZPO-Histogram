@@ -8,12 +8,16 @@
 class GrayscaleImage
 {
 public:
-    GrayscaleImage(std::string file_name);
+    GrayscaleImage(const std::string file_name);
+    GrayscaleImage(const GrayscaleImage& other);
 
     int width() const;
     int height() const;
     int pixel_count() const;
     uint8_t pixel(int x, int y) const;
+    void pixel(int x, int y, uint8_t val);
+    void scale_values(double factor);
+    void show(const std::string winName) const;
 private:
     cv::Mat _data;
 };

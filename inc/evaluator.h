@@ -6,7 +6,7 @@
 class Evaluator
 {
 public:
-    static void compare_histrograms(const HistogramBase& hist_a,
+    static void compare_histrograms_text(const HistogramBase& hist_a,
             const HistogramBase& hist_b);
     
 private:

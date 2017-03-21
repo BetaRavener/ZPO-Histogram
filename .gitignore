@@ -38,3 +38,6 @@ build/
 .cproject
 .project
 .settings/
+
+# Person include
+inc/person.h
