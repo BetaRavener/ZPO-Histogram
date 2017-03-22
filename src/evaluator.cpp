@@ -1,8 +1,23 @@
 #include "evaluator.h"
 
 #include <iostream>
+#include <algorithm>
 #include <iomanip>
 #include <string>
+
+double Evaluator::score(const HistogramBase& hist_a,
+        const HistogramBase& hist_b)
+{
+    double ssd = sum_of_squared_differences(hist_a, hist_b);
+    double ratio = used_pixel_ratio(hist_a, hist_b);
+    return 1e-6/(ssd*ratio);
+}
+
+double Evaluator::used_pixel_ratio(const HistogramBase& hist_a,
+    const HistogramBase& hist_b)
+{
+    return (double)hist_b.used_samples() / hist_a.used_samples();
+}
 
 double Evaluator::sum_of_squared_differences(const HistogramBase& hist_a,
         const HistogramBase& hist_b)
@@ -14,6 +29,25 @@ double Evaluator::sum_of_squared_differences(const HistogramBase& hist_a,
         sum += diff * diff;
     }
     return sum;
+}
+
+double Evaluator::median(std::vector<double> vec)
+{
+    double median;
+    size_t size = vec.size();
+
+    sort(vec.begin(), vec.end());
+
+    if (size  % 2 == 0)
+    {
+      median = (vec[size / 2 - 1] + vec[size / 2]) / 2;
+    }
+    else
+    {
+      median = vec[size / 2];
+    }
+
+    return median;
 }
 
 void Evaluator::compare_histrograms_text(const HistogramBase& hist_a,

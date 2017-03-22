@@ -75,6 +75,8 @@ void one_method(std::vector<std::string> params)
 
     std::vector<std::string> filenames;
     cv::glob(params[0], filenames);
+    if (filenames.size() == 0)
+        throw std::invalid_argument("Image directory is empty.");
 
     FullHistogram full_hist;
     auto other_hist = method_class(std::vector<std::string>(params.begin()+2, params.end()));
@@ -85,6 +87,7 @@ void one_method(std::vector<std::string> params)
         out_file.open(params[1]);
     std::ostream& output = use_file ? out_file : std::cout;
 
+    std::vector<double> ssds;
     output << "Method: " << other_hist->to_string() << "\n";
     //SSD == Sum of squred differences (Least Squares)
     output << "Filename: SSD, pixel ratio\n";
@@ -93,12 +96,19 @@ void one_method(std::vector<std::string> params)
         GrayscaleImage img(filename);
         full_hist.compute(img);
         other_hist->compute(img);
+        double ssd = Evaluator::sum_of_squared_differences(full_hist, *other_hist);
+        ssds.push_back(ssd);
         output << filename << ": "
          << std::scientific << std::setprecision(5)
-         << Evaluator::sum_of_squared_differences(full_hist, *other_hist) << ", "
+         << ssd << ", "
          << std::fixed
-         << (double)other_hist->used_samples () / full_hist.used_samples() << "\n";
+         << Evaluator::used_pixel_ratio(full_hist, *other_hist) << "\n";
     }
+    output << "Statistics:\n Sum of squared differences:\n"
+     << std::scientific << std::setprecision(3)
+     << "  min: " << *std::min_element(ssds.begin(), ssds.end())
+     << ", max: " << *std::max_element(ssds.begin(), ssds.end())
+     << "\n  median: " << Evaluator::median(ssds) << "\n";
 }
 
 void one_image(std::vector<std::string> params)
