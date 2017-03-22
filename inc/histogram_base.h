@@ -15,7 +15,7 @@ public:
     double bin(int bin_idx) const;
     int used_samples() const;
     double total_probabilities() const;
-    std::string to_string() const;
+    virtual std::string to_string() const = 0;
 
 protected:
     void clear_data();

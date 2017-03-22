@@ -26,14 +26,6 @@ double HistogramBase::total_probabilities() const
     return acc;
 }
 
-std::string HistogramBase::to_string() const
-{
-    std::ostringstream oss;
-    for (int i = 0; i < size; i++)
-        oss << i << ": " << _data[i] << "\n";
-    return oss.str();
-}
-
 void HistogramBase::clear_data()
 {
     _used_samples = 0;

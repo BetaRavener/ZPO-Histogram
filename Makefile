@@ -8,6 +8,7 @@ ZPO_OBJ = $(addprefix $(OBJDIR)/, \
 	histogram_base.o \
 	full_histogram.o \
 	undersampled_histogram.o \
+	recursive_cross_histogram.o \
 	evaluator.o \
 	main_ivan.o \
 	main_marek.o \

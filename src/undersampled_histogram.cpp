@@ -24,3 +24,8 @@ void UndersampledHistogram::compute(const GrayscaleImage& img, GrayscaleImage* m
     for (int i = 0; i < size; i++)
         _data[i] /= _used_samples;
 }
+
+std::string UndersampledHistogram::to_string() const
+{
+    return "Downsampled Histogram (" + std::to_string(_step) + ")";
+}

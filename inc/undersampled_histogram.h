@@ -10,6 +10,7 @@ public:
     virtual ~UndersampledHistogram() = default;
 
     virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
+    virtual std::string to_string() const;
 private:
     int _step;
 };

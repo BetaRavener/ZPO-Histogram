@@ -19,3 +19,8 @@ void FullHistogram::compute(const GrayscaleImage& img, GrayscaleImage* mark_img)
     for (int i = 0; i < size; i++)
         _data[i] /= _used_samples;
 }
+
+std::string FullHistogram::to_string() const
+{
+    return "Full Histogram";
+}

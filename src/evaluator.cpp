@@ -4,6 +4,18 @@
 #include <iomanip>
 #include <string>
 
+double Evaluator::sum_of_squared_differences(const HistogramBase& hist_a,
+        const HistogramBase& hist_b)
+{
+    double sum = 0;
+    for (int i = 0; i < HistogramBase::size; i++)
+    {
+        double diff = hist_a.bin(i) - hist_b.bin(i);
+        sum += diff * diff;
+    }
+    return sum;
+}
+
 void Evaluator::compare_histrograms_text(const HistogramBase& hist_a,
         const HistogramBase& hist_b)
 {
@@ -42,5 +54,7 @@ void Evaluator::compare_histrograms_text(const HistogramBase& hist_a,
               << ", Histogram B: " << used_b
               << ", Ratio B to A: " << std::setprecision(5)
               << (float)used_b / used_a << "\n";
+    std::cout << "Sum of squared differences: " << std::scientific
+              << sum_of_squared_differences(hist_a, hist_b) << "\n";
     std::cout.flush();
 }
