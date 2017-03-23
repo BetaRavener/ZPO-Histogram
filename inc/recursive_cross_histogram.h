@@ -10,7 +10,7 @@ class RecursiveCrossHistogram : public HistogramBase
 public:
     RecursiveCrossHistogram(int threshold, uint64_t forced_division_area);
     virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
-    virtual std::string to_string() const;
+    virtual std::string to_string(bool with_params=false) const;
 private:
     int _threshold;
     uint64_t _forced_division_area;

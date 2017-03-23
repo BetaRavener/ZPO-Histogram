@@ -9,7 +9,7 @@ public:
     virtual ~FullHistogram() = default;
 
     virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
-    virtual std::string to_string() const;
+    virtual std::string to_string(bool with_params=false) const;
 };
 
 #endif

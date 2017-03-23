@@ -16,54 +16,107 @@
 #include "recursive_cross_histogram.h"
 #include "evaluator.h"
 
-std::unique_ptr<HistogramBase> method_class(std::vector<std::string> params)
+std::unique_ptr<HistogramBase> args_to_class(std::vector<std::string> params)
 {
     if (params.size() < 1)
         throw std::invalid_argument("Missing method name.");
 
+    Evaluator::Methods method;
+    std::vector<ParamType> conv_params;
+    ParamType p;
     if (params[0] == "downsample")
     {
-        int step = 2;
-
         try
         {
-            if (params.size() > 1)
-                step = stoi(params[1]);
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
         }
         catch(const std::exception& e)
         {
             throw std::invalid_argument("Error converting parameter to number.");
         }
-        return std::unique_ptr<HistogramBase>(new
-                UndersampledHistogram(step));
+        method = Evaluator::Methods::Downsample;
+
     }
     else if (params[0] == "cross")
     {
-        int threshold = 10;
-        int forced_division_area = 0;
-
         try
         {
-            if (params.size() > 1)
-                threshold = stoi(params[1]);
-            if (params.size() > 2)
-                forced_division_area = stoi(params[2]);
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+
+            if (params.size() > 2){
+                p.i = stoi(params[2]);
+                conv_params.push_back(p);
+            }
         }
         catch(const std::exception& e)
         {
             throw std::invalid_argument("Error converting parameter to number.");
         }
-
-        return std::unique_ptr<HistogramBase>(new
-                RecursiveCrossHistogram(threshold, forced_division_area));
+        method = Evaluator::Methods::Cross;
     }
     else
         throw std::invalid_argument("Invalid method: " + params[0] + ".");
+
+    return Evaluator::make_class(method, conv_params);
 }
 
 void all_methods(std::vector<std::string> params)
 {
+    if (params.size() < 1)
+       throw std::invalid_argument("Missing image directory parameter.");
+    if (params.size() < 2)
+       throw std::invalid_argument("Missing output file parameter.");
 
+    ParamType param;
+    std::vector<std::string> filenames;
+    cv::glob(params[0], filenames);
+    std::vector<FullHistogram> full_histograms;
+
+    // Prepare full histograms for each image
+    for (auto& filename : filenames) {
+        GrayscaleImage img(filename);
+        full_histograms.push_back(FullHistogram());
+        full_histograms.back().compute(img);
+    }
+
+//    { // Downsample experiment
+//        Experiment experiment;
+//        experiment.params.resize(1);
+//        auto& down_steps = experiment.params[0];
+//        for (int i = 2; i <= 6; i++) {
+//            param.i = i;
+//            down_steps.push_back(param);
+//        }
+//        experiment.method = Evaluator::Methods::Downsample;
+//        Evaluator::do_experiment(experiment, filenames, full_histograms);
+//        //TODO: Print
+//    }
+
+    { // Cross experiment
+        Experiment experiment;
+        experiment.params.resize(2);
+        auto& thresholds = experiment.params[0];
+        auto& areas = experiment.params[1];
+        std::vector<int> threshold_values = {40,60,80,100,120};
+        std::vector<int> area_values = {0,100,400,800,1600};
+        for (auto val : threshold_values) {
+            param.i = val;
+            thresholds.push_back(param);
+        }
+        for (auto val : area_values) {
+            param.i = val;
+            areas.push_back(param);
+        }
+        experiment.method = Evaluator::Methods::Cross;
+        Evaluator::do_experiment(experiment, filenames, full_histograms);
+        //TODO: Print
+    }
 }
 
 void one_method(std::vector<std::string> params)
@@ -79,7 +132,7 @@ void one_method(std::vector<std::string> params)
         throw std::invalid_argument("Image directory is empty.");
 
     FullHistogram full_hist;
-    auto other_hist = method_class(std::vector<std::string>(params.begin()+2, params.end()));
+    auto other_hist = args_to_class(std::vector<std::string>(params.begin()+2, params.end()));
 
     bool use_file = params[1] != "-";
     std::ofstream out_file;
@@ -124,7 +177,7 @@ void one_image(std::vector<std::string> params)
     img_sampled.scale_values(0.8);
 
     FullHistogram full_hist;
-    auto other_hist = method_class(std::vector<std::string>(params.begin()+1, params.end()));
+    auto other_hist = args_to_class(std::vector<std::string>(params.begin()+1, params.end()));
 
 
     full_hist.compute(img);

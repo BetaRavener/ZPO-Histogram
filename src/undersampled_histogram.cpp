@@ -25,7 +25,8 @@ void UndersampledHistogram::compute(const GrayscaleImage& img, GrayscaleImage* m
         _data[i] /= _used_samples;
 }
 
-std::string UndersampledHistogram::to_string() const
+std::string UndersampledHistogram::to_string(bool with_params) const
 {
-    return "Downsampled Histogram (" + std::to_string(_step) + ")";
+    return "Downsampled Histogram" + (with_params ?
+            (" (" + std::to_string(_step) + ")") : "");
 }

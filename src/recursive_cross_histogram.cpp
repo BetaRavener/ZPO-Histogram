@@ -138,8 +138,9 @@ void RecursiveCrossHistogram::compute(const GrayscaleImage& img,
         _data[i] /= area;
 }
 
-std::string RecursiveCrossHistogram::to_string() const
+std::string RecursiveCrossHistogram::to_string(bool with_params) const
 {
-    return "Cross Histrogram (" + std::to_string(_threshold) + ", " +
-            std::to_string(_forced_division_area) + ")";
+    return "Cross Histrogram" +
+            (with_params ? (" (" + std::to_string(_threshold) + ", " +
+            std::to_string(_forced_division_area) + ")") : "");
 }

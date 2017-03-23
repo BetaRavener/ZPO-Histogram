@@ -4,6 +4,33 @@
 #include <algorithm>
 #include <iomanip>
 #include <string>
+#include <stdexcept>
+
+#include "undersampled_histogram.h"
+#include "recursive_cross_histogram.h"
+
+std::unique_ptr<HistogramBase> Evaluator::make_class(Methods method,
+        const std::vector<ParamType>& params)
+{
+    switch (method)
+    {
+    case Methods::Downsample: {
+        int step = params.size() > 0 ? params[0].i : 2;
+
+        return std::unique_ptr<HistogramBase>(new
+                UndersampledHistogram(step));
+    }
+    case Methods::Cross: {
+        int threshold = params.size() > 0 ? params[0].i : 10;
+        int forced_division_area = params.size() > 1 ? params[1].i : 0;
+
+        return std::unique_ptr<HistogramBase>(new
+                RecursiveCrossHistogram(threshold, forced_division_area));
+    }
+    default:
+        throw std::invalid_argument("Invalid method.");
+    }
+}
 
 double Evaluator::score(const HistogramBase& hist_a,
         const HistogramBase& hist_b)
@@ -91,4 +118,74 @@ void Evaluator::compare_histrograms_text(const HistogramBase& hist_a,
     std::cout << "Sum of squared differences: " << std::scientific
               << sum_of_squared_differences(hist_a, hist_b) << "\n";
     std::cout.flush();
+}
+
+std::vector<std::vector<ParamType>> make_permutations(std::vector<std::vector<ParamType>>& params)
+{
+    if (params.size() > 2)
+        throw std::invalid_argument("Permutations of more than 2 dimensions not supported.");
+
+    std::vector<std::vector<ParamType>> perms;
+
+    if (params.size() == 1)
+    {
+        for (auto& x : params[0])
+            perms.push_back(std::vector<ParamType>{x});
+    }
+
+    if (params.size() == 2)
+    {
+        for (auto& y : params[1])
+        {
+            for (auto& x : params[0])
+                perms.push_back(std::vector<ParamType>{x, y});
+        }
+    }
+
+    return perms;
+
+}
+
+void Evaluator::do_experiment(Experiment& experiment,
+        const std::vector<std::string>& filenames,
+        const std::vector<FullHistogram>& full_histograms)
+{
+    std::vector<std::unique_ptr<HistogramBase>> methods;
+    std::vector<std::vector<double>> ssds;
+    std::vector<std::vector<double>> scores;
+
+    // Prepare parameters and methods
+    auto param_permutations = make_permutations(experiment.params);
+    for (auto& param_perm : param_permutations)
+    {
+        methods.push_back(make_class(experiment.method, param_perm));
+    }
+    ssds.resize(methods.size());
+    scores.resize(methods.size());
+
+    // Compute results for all images and parameters
+    for (size_t i = 0; i < filenames.size(); i++)
+    {
+        GrayscaleImage img(filenames[i]);
+        auto& full_hist = full_histograms[i];
+        for (size_t j = 0; j < methods.size(); j++)
+        {
+            methods[j]->compute(img);
+            ssds[j].push_back(sum_of_squared_differences(full_hist, *methods[j]));
+            scores[j].push_back(score(full_hist, *methods[j]));
+        }
+    }
+
+    // Summarize results
+    for (size_t i = 0; i < methods.size(); i++)
+    {
+        ExperimentResult res;
+        res.min_SSD = *std::min_element(ssds[i].begin(), ssds[i].end());
+        res.max_SSD = *std::max_element(ssds[i].begin(), ssds[i].end());
+        res.median_SSD = median(ssds[i]);
+        res.min_score = *std::min_element(scores[i].begin(), scores[i].end());
+        res.max_score = *std::max_element(scores[i].begin(), scores[i].end());
+        res.median_score = median(scores[i]);
+        experiment.results.push_back(res);
+    }
 }
