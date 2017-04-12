@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <ostream>
 
 #include "histogram_base.h"
 #include "full_histogram.h"
@@ -42,6 +43,8 @@ public:
     static double median(std::vector<double> vec);
     static void compare_histrograms_text(const HistogramBase& hist_a,
             const HistogramBase& hist_b);
+    static void print_experiment(std::ostream& out,
+            const Experiment& experiment, bool scores);
     static void do_experiment(Experiment& experiment,
             const std::vector<std::string>& filenames,
             const std::vector<FullHistogram>& full_histograms);

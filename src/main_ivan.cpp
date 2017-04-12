@@ -73,18 +73,39 @@ void all_methods(std::vector<std::string> params)
     if (params.size() < 2)
        throw std::invalid_argument("Missing output file parameter.");
 
+    bool scores = true;
+    if (params.size() > 2)
+    {
+        if (params[2] == std::string("sum"))
+            scores = false;
+        else if (params[2] == std::string("score"))
+            scores = true;
+        else
+            throw std::invalid_argument("Invalid result type.");
+    }
+
     ParamType param;
     std::vector<std::string> filenames;
     cv::glob(params[0], filenames);
+    //filenames=std::vector<std::string>{"img/lena.png"};
     std::vector<FullHistogram> full_histograms;
 
-    // Prepare full histograms for each image
-    for (auto& filename : filenames) {
-        GrayscaleImage img(filename);
-        full_histograms.push_back(FullHistogram());
-        full_histograms.back().compute(img);
-    }
+    bool use_file = params[1] != "-";
+    std::ofstream out_file;
+    if (use_file)
+        out_file.open(params[1]);
+    std::ostream& output = use_file ? out_file : std::cout;
 
+
+
+    // Prepare full histograms for each image
+//    for (auto& filename : filenames) {
+//        GrayscaleImage img(filename);
+//        full_histograms.push_back(FullHistogram());
+//        full_histograms.back().compute(img);
+//    }
+
+    // Make experiment
 //    { // Downsample experiment
 //        Experiment experiment;
 //        experiment.params.resize(1);
@@ -95,28 +116,58 @@ void all_methods(std::vector<std::string> params)
 //        }
 //        experiment.method = Evaluator::Methods::Downsample;
 //        Evaluator::do_experiment(experiment, filenames, full_histograms);
-//        //TODO: Print
+//        Evaluator::print_experiment(output, experiment, scores);
 //    }
 
-    { // Cross experiment
-        Experiment experiment;
-        experiment.params.resize(2);
-        auto& thresholds = experiment.params[0];
-        auto& areas = experiment.params[1];
-        std::vector<int> threshold_values = {40,60,80,100,120};
-        std::vector<int> area_values = {0,100,400,800,1600};
-        for (auto val : threshold_values) {
-            param.i = val;
-            thresholds.push_back(param);
-        }
-        for (auto val : area_values) {
-            param.i = val;
-            areas.push_back(param);
-        }
-        experiment.method = Evaluator::Methods::Cross;
-        Evaluator::do_experiment(experiment, filenames, full_histograms);
-        //TODO: Print
+//    { // Cross experiment
+//        Experiment experiment;
+//        experiment.params.resize(2);
+//        auto& thresholds = experiment.params[0];
+//        auto& areas = experiment.params[1];
+//        std::vector<int> threshold_values = {40,60,80,100,120};
+//        std::vector<int> area_values = {0,100,400,800,1600};
+//        for (auto val : threshold_values) {
+//            param.i = val;
+//            thresholds.push_back(param);
+//        }
+//        for (auto val : area_values) {
+//            param.i = val;
+//            areas.push_back(param);
+//        }
+//        experiment.method = Evaluator::Methods::Cross;
+//        Evaluator::do_experiment(experiment, filenames, full_histograms);
+//        Evaluator::print_experiment(output, experiment, scores);
+//    }
+
+    Experiment experiment;
+    experiment.params.resize(2);
+    experiment.method = Evaluator::Methods::Cross;
+    auto& thresholds = experiment.params[0];
+    auto& areas = experiment.params[1];
+    std::vector<int> threshold_values = {40,60,80,100,120};
+    std::vector<int> area_values = {0,100,400,800,1600};
+    for (auto val : threshold_values) {
+        param.i = val;
+        thresholds.push_back(param);
     }
+    for (auto val : area_values) {
+        param.i = val;
+        areas.push_back(param);
+    }
+
+    for (size_t i = 0; i < 25; i++)
+    {
+        ExperimentResult res;
+        res.min_SSD = 0;
+        res.max_SSD = i;
+        res.median_SSD = 0.555555555555e-5;
+        res.min_score = 5;
+        res.max_score = 10;
+        res.median_score = 7.5;
+        experiment.results.push_back(res);
+    }
+
+    Evaluator::print_experiment(output, experiment, scores);
 }
 
 void one_method(std::vector<std::string> params)

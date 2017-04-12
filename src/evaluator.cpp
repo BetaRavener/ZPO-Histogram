@@ -146,6 +146,136 @@ std::vector<std::vector<ParamType>> make_permutations(std::vector<std::vector<Pa
 
 }
 
+double pick_best(const ExperimentResult& r, bool scores)
+{
+    return scores ? r.max_score : r.min_SSD;
+}
+
+double pick_worst(const ExperimentResult& r, bool scores)
+{
+    return scores ? r.min_score : r.max_SSD;
+}
+
+double pick_median(const ExperimentResult& r, bool scores)
+{
+    return scores ? r.median_score : r.median_SSD;
+}
+
+void print_row_experiment(std::ostream &out, const Experiment& experiment, bool scores)
+{
+    auto& params = experiment.params[0];
+    auto& results = experiment.results;
+    int cell_width = 11;
+
+    out << " param|";
+    for (size_t i = 0; i < params.size(); i++) {
+        out << std::setw(cell_width) << std::setprecision(4) << params[i].i
+            << ((i < params.size()-1) ? "|" : "");
+    }
+    out<<"\n";
+
+    out << "------+";
+    std::string rs(cell_width, '-');
+    for (size_t i = 0; i < params.size(); i++) {
+        out << rs << ((i < params.size()-1) ? "+" : "");
+    }
+    out<<"\n";
+
+    out << std::scientific << std::setprecision(4);
+    for (int j = 0; j < 3; j++)
+    {
+        if (j == 0)
+            out << "  best|";
+        else if (j == 1)
+            out << " worst|";
+        else
+            out << "median|";
+        for (size_t i = 0; i < results.size(); i++) {
+            out << std::setw(cell_width);
+            if (j == 0)
+                out << pick_best(results[i], scores);
+            else if (j == 1)
+                out << pick_worst(results[i], scores);
+            else
+                out << pick_median(results[i], scores);
+            if (i < params.size()-1)
+                out << "|";
+        }
+        out<<"\n";
+    }
+}
+
+void print_table_experiment(std::ostream &out, const Experiment& experiment, bool scores)
+{
+    int cell_w = 11;
+    auto& col_params = experiment.params[0];
+    auto& row_params = experiment.params[1];
+    auto& results = experiment.results;
+
+    out << std::setprecision(4);
+
+    std::string param_labels[2] = {"v param2", "param1 ->"};
+    for (size_t i = 0; i < col_params.size()+2; i++) {
+        if (i >= 2)
+            out << std::setw(cell_w) << col_params[i-2].i;
+        else
+            out << std::string(cell_w - param_labels[i].size(), ' ') << param_labels[i];
+        out << ((i < col_params.size()+1) ? "|" : "");
+    }
+    out<<"\n";
+
+    std::string labels[3] = {"best", "worst", "median"};
+    for (size_t y = 0; y < row_params.size(); y++)
+    {
+        std::string rs(cell_w, '-');
+        for (size_t i = 0; i < col_params.size()+2; i++) {
+            out << rs << ((i < col_params.size()+1) ? "+" : "");
+        }
+        out << "\n";
+
+        for (int j = 0; j < 3; j++)
+        {
+            if (j == 1)
+                out << std::setw(cell_w) << row_params[y].i;
+            else
+                out << std::string(cell_w, ' ');
+            out << "|";
+
+            out << std::string(cell_w - labels[j].size(), ' ') << labels[j] << "|";
+
+            for (size_t x = 0; x < col_params.size(); x++)
+            {
+                int res_idx = x + y * col_params.size();
+                out << std::setw(cell_w);
+                if (j == 0)
+                    out << pick_best(results[res_idx], scores);
+                else if (j == 1)
+                    out << pick_worst(results[res_idx], scores);
+                else
+                    out << pick_median(results[res_idx], scores);
+                if (x < col_params.size()-1)
+                    out << "|";
+            }
+            out << "\n";
+        }
+    }
+}
+
+void Evaluator::print_experiment(std::ostream& out, const Experiment& experiment, bool scores)
+{
+    // Method name header
+    out << "##### "
+        << make_class(experiment.method, std::vector<ParamType>())->to_string()
+        << " (" << (scores ? "Score" : "Sum of Squared Differences") << ")"
+        << " #####\n";
+    if (experiment.params.size() == 1)
+        print_row_experiment(out, experiment, scores);
+    if (experiment.params.size() == 2)
+        print_table_experiment(out, experiment, scores);
+
+    out << std::endl;
+}
+
 void Evaluator::do_experiment(Experiment& experiment,
         const std::vector<std::string>& filenames,
         const std::vector<FullHistogram>& full_histograms)
