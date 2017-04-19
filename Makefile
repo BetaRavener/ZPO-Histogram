@@ -9,6 +9,12 @@ ZPO_OBJ = $(addprefix $(OBJDIR)/, \
 	full_histogram.o \
 	undersampled_histogram.o \
 	recursive_cross_histogram.o \
+	concentric_histogram.o \
+	chess_histogram.o \
+	masked_histogram.o \
+	random_sampling_histogram.o \
+	nearest_neighbour_histogram.o \
+	random_areas_histogram.o \
 	evaluator.o \
 	main_ivan.o \
 	main_marek.o \
