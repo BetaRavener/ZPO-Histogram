@@ -149,11 +149,6 @@ std::unique_ptr<HistogramBase> args_to_class(std::vector<std::string> params)
                 p.i = stoi(params[2]);
                 conv_params.push_back(p);
             }
-            if (params.size() > 3) {
-                p.i = stoi(params[3]);
-                conv_params.push_back(p);
-            }
-
         }
         catch(const std::exception& e)
         {

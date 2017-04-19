@@ -65,11 +65,10 @@ std::unique_ptr<HistogramBase> Evaluator::make_class(Methods method,
     }
     case Methods::RandomAreas: {
         int numPixels = params.size() > 0 ? params[0].i : 10000;
-        int width = params.size() > 1 ? params[1].i : 2;
-        int height = params.size() > 1 ? params[1].i : 2;
+        int areas = params.size() > 1 ? params[1].i : 2;
 
         return std::unique_ptr<HistogramBase>(new
-                RandomAreasHistogram(numPixels, width, height));
+                RandomAreasHistogram(numPixels, areas));
     }
     default:
         throw std::invalid_argument("Invalid method.");

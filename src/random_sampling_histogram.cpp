@@ -14,7 +14,6 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
 
     int imgNumPixels = img.pixel_count();
     int width = img.width();
-    std::cout << "width: " << width << " height: " << img.height() << std::endl;
     int pixel; // 1D pixel address
     int x, y;
 
@@ -29,14 +28,11 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
         pixel = rand_num();
         y = pixel / width;
         x = pixel % width;
-            if (x > width || y > img.height())
-                std::cout << "x: " << x << " y: " << y << std::endl;
         
         _used_samples++;
         _data[img.pixel(x,y)]++;
         if (mark_img != nullptr)
             mark_img->pixel(x,y, 255);
-
     }
 
      // Normalize histogram
@@ -46,6 +42,6 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
 
 std::string RandomSamplingHistogram::to_string(bool with_params) const
 {
-    return "Downsampled Histogram" + (with_params ?
+    return "Random Sampling" + (with_params ?
             (" (" + std::to_string(_numPixels) + ")") : "");
 }

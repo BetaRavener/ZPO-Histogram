@@ -4,16 +4,18 @@
 #include <functional>
 #include <chrono>
 
-RandomAreasHistogram::RandomAreasHistogram(int numPixels, int width, int height) :
+RandomAreasHistogram::RandomAreasHistogram(int numPixels, int areas) :
     _numPixels(numPixels),
-    _widthAreas(width),
-    _heightAreas(height)
+    _areas(areas)
 {
 }
 
 void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* mark_img)
 {
     clear_data();
+
+    int _widthAreas  = _areas;
+    int _heightAreas = _areas;
 
     int width = img.width();
     int height = img.height();
@@ -32,7 +34,6 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
 
     double widthPart = (double)(width - 1) / (double)_widthAreas;
     double heightPart = (double)(height - 1) / (double)_heightAreas;
-
 
 
     for(int i = 0; i < _widthAreas; i++)
@@ -64,13 +65,10 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
     }
 
     int min, max, pixVal, areaNumPixels;
-
-
     for(int i = 0; i < _heightAreas; i++)
     {
         for(int j = 0; j < _widthAreas; j++)
         {
-            //std::cout << "Area: " << i * _widthAreas + j << " width: " << widthEnd[j] - widthStart[j] << " height: " << heightEnd[i] - heightStart[i];
             min = 255;
             max = 0;
             width = widthEnd[j] - widthStart[j];
@@ -96,7 +94,6 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
                     max = pixVal;
             }
             areaRange[i * _widthAreas + j] = max - min;
-            //std::cout << " range: " << areaRange[i * _widthAreas + j] << std::endl;
         }
     }
 
@@ -135,7 +132,6 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
                 _data[img.pixel(x,y)]++;
                 if (mark_img != nullptr)
                     mark_img->pixel(x,y, 255);
-
             }
         }
     }
@@ -148,6 +144,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
 
 std::string RandomAreasHistogram::to_string(bool with_params) const
 {
-    return "Downsampled Histogram" + (with_params ?
-            (" (" + std::to_string(_numPixels) + ")") : "");
+    return "Random Areas" +
+            (with_params ? (" (" + std::to_string(_numPixels) + ", " +
+            std::to_string(_areas) + ")") : "");
 }

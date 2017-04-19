@@ -19,7 +19,6 @@ void NearestNeighbourHistogram::compute(const GrayscaleImage& img, GrayscaleImag
 
     double aspect = (double)width / (double)height;
     
-    
     int newHeight =(int)llround(sqrt(_numPixels/aspect));
     int newWidth = (int)llround(aspect * sqrt(_numPixels/aspect));
 
@@ -38,8 +37,6 @@ void NearestNeighbourHistogram::compute(const GrayscaleImage& img, GrayscaleImag
         }
     }
 
-
-
      // Normalize histogram
     for (int i = 0; i < size; i++)
         _data[i] /= _used_samples;
@@ -47,6 +44,6 @@ void NearestNeighbourHistogram::compute(const GrayscaleImage& img, GrayscaleImag
 
 std::string NearestNeighbourHistogram::to_string(bool with_params) const
 {
-    return "Downsampled Histogram" + (with_params ?
+    return "Nearest Neighbour" + (with_params ?
             (" (" + std::to_string(_numPixels) + ")") : "");
 }

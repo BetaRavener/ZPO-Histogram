@@ -6,14 +6,13 @@
 class RandomAreasHistogram : public HistogramBase
 {
 public:
-    RandomAreasHistogram(int numPixels, int width, int height);
+    RandomAreasHistogram(int numPixels, int areas);
 
     virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
     virtual std::string to_string(bool with_params=false) const;
 private:
     int _numPixels;
-    int _widthAreas;
-    int _heightAreas;
+    int _areas;
 };
 
 #endif
