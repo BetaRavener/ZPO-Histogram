@@ -60,6 +60,107 @@ std::unique_ptr<HistogramBase> args_to_class(std::vector<std::string> params)
         }
         method = Evaluator::Methods::Cross;
     }
+    else if (params[0] == "circle")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::Circle;
+    }
+    else if (params[0] == "chess")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::Chess;
+    }
+    else if (params[0] == "masked")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::Masked;
+    }
+    else if (params[0] == "random")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::Random;
+    }
+    else if (params[0] == "neighbour")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::Neighbour;
+    }
+    else if (params[0] == "randomAreas")
+    {
+        try
+        {
+            if (params.size() > 1) {
+                p.i = stoi(params[1]);
+                conv_params.push_back(p);
+            }
+            if (params.size() > 2) {
+                p.i = stoi(params[2]);
+                conv_params.push_back(p);
+            }
+            if (params.size() > 3) {
+                p.i = stoi(params[3]);
+                conv_params.push_back(p);
+            }
+
+        }
+        catch(const std::exception& e)
+        {
+            throw std::invalid_argument("Error converting parameter to number.");
+        }
+        method = Evaluator::Methods::RandomAreas;
+    }
     else
         throw std::invalid_argument("Invalid method: " + params[0] + ".");
 
@@ -99,75 +200,145 @@ void all_methods(std::vector<std::string> params)
 
 
     // Prepare full histograms for each image
-//    for (auto& filename : filenames) {
-//        GrayscaleImage img(filename);
-//        full_histograms.push_back(FullHistogram());
-//        full_histograms.back().compute(img);
-//    }
-
-    // Make experiment
-//    { // Downsample experiment
-//        Experiment experiment;
-//        experiment.params.resize(1);
-//        auto& down_steps = experiment.params[0];
-//        for (int i = 2; i <= 6; i++) {
-//            param.i = i;
-//            down_steps.push_back(param);
-//        }
-//        experiment.method = Evaluator::Methods::Downsample;
-//        Evaluator::do_experiment(experiment, filenames, full_histograms);
-//        Evaluator::print_experiment(output, experiment, scores);
-//    }
-
-//    { // Cross experiment
-//        Experiment experiment;
-//        experiment.params.resize(2);
-//        auto& thresholds = experiment.params[0];
-//        auto& areas = experiment.params[1];
-//        std::vector<int> threshold_values = {40,60,80,100,120};
-//        std::vector<int> area_values = {0,100,400,800,1600};
-//        for (auto val : threshold_values) {
-//            param.i = val;
-//            thresholds.push_back(param);
-//        }
-//        for (auto val : area_values) {
-//            param.i = val;
-//            areas.push_back(param);
-//        }
-//        experiment.method = Evaluator::Methods::Cross;
-//        Evaluator::do_experiment(experiment, filenames, full_histograms);
-//        Evaluator::print_experiment(output, experiment, scores);
-//    }
-
-    Experiment experiment;
-    experiment.params.resize(2);
-    experiment.method = Evaluator::Methods::Cross;
-    auto& thresholds = experiment.params[0];
-    auto& areas = experiment.params[1];
-    std::vector<int> threshold_values = {40,60,80,100,120};
-    std::vector<int> area_values = {0,100,400,800,1600};
-    for (auto val : threshold_values) {
-        param.i = val;
-        thresholds.push_back(param);
-    }
-    for (auto val : area_values) {
-        param.i = val;
-        areas.push_back(param);
+    for (auto& filename : filenames) {
+        GrayscaleImage img(filename);
+        full_histograms.push_back(FullHistogram());
+        full_histograms.back().compute(img);
     }
 
-    for (size_t i = 0; i < 25; i++)
+    // Make experiments
+    for (int i = 0; i < 8; i++)
     {
-        ExperimentResult res;
-        res.min_SSD = 0;
-        res.max_SSD = i;
-        res.median_SSD = 0.555555555555e-5;
-        res.min_score = 5;
-        res.max_score = 10;
-        res.median_score = 7.5;
-        experiment.results.push_back(res);
+        Experiment experiment;
+        switch (i)
+        {
+        case 0:{ // Downsample method
+            experiment.params.resize(1);
+            auto& down_steps = experiment.params[0];
+            for (int i = 2; i <= 6; i++) {
+                param.i = i;
+                down_steps.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Downsample;
+            break;
+        }
+        case 1:{ // Cross method
+            experiment.params.resize(2);
+            auto& thresholds = experiment.params[0];
+            auto& areas = experiment.params[1];
+            std::vector<int> threshold_values = {40,60,80,100,120};
+            std::vector<int> area_values = {0,100,400,800,1600};
+            for (auto val : threshold_values) {
+                param.i = val;
+                thresholds.push_back(param);
+            }
+            for (auto val : area_values) {
+                param.i = val;
+                areas.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Cross;
+            break;
+        }
+        case 2:{ // Circle method
+            experiment.params.resize(1);
+            //TODO: Fill interesting param values
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {1,2,3};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Circle;
+            break;
+        }
+        case 3:{ // Chess method
+            experiment.params.resize(1);
+            //TODO: Fill interesting param values
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {1,2,3};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Chess;
+            break;
+        }
+        case 4:{ // Masked method
+            experiment.params.resize(1);
+            //TODO: Fill interesting param values
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {1,2,3};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Masked;
+            break;
+        }
+        case 5:{ // Random method
+            experiment.params.resize(1);
+            //TODO: Fill interesting param values
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {1,2,3};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Random;
+            break;
+        }
+        case 6:{ // Neighbour method
+            experiment.params.resize(1);
+            //TODO: Fill interesting param values
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {1,2,3};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Neighbour;
+            break;
+        }
+        case 7:{ // Random Areas method
+            //TODO: Somehow do experiment
+            experiment.method = Evaluator::Methods::RandomAreas;
+            break;
+        }
+        }
+        Evaluator::do_experiment(experiment, filenames, full_histograms);
+        Evaluator::print_experiment(output, experiment, scores);
     }
 
-    Evaluator::print_experiment(output, experiment, scores);
+//
+//    Experiment experiment;
+//    experiment.params.resize(2);
+//    experiment.method = Evaluator::Methods::Cross;
+//    auto& thresholds = experiment.params[0];
+//    auto& areas = experiment.params[1];
+//    std::vector<int> threshold_values = {40,60,80,100,120};
+//    std::vector<int> area_values = {0,100,400,800,1600};
+//    for (auto val : threshold_values) {
+//        param.i = val;
+//        thresholds.push_back(param);
+//    }
+//    for (auto val : area_values) {
+//        param.i = val;
+//        areas.push_back(param);
+//    }
+//
+//    for (size_t i = 0; i < 25; i++)
+//    {
+//        ExperimentResult res;
+//        res.min_SSD = 0;
+//        res.max_SSD = i;
+//        res.median_SSD = 0.555555555555e-5;
+//        res.min_score = 5;
+//        res.max_score = 10;
+//        res.median_score = 7.5;
+//        experiment.results.push_back(res);
+//    }
+//
+//    Evaluator::print_experiment(output, experiment, scores);
 }
 
 void one_method(std::vector<std::string> params)
