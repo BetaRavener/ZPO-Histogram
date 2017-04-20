@@ -16,9 +16,7 @@ ZPO_OBJ = $(addprefix $(OBJDIR)/, \
 	nearest_neighbour_histogram.o \
 	random_areas_histogram.o \
 	evaluator.o \
-	main_ivan.o \
-	main_marek.o \
-	main_matej.o)
+	main.o )
 	
 CC = g++
 # Executable flags
@@ -45,9 +43,6 @@ all: mkdir zpo-histo
 debug: CFLAGS += -g
 debug: all
 
-run:
-	./build/zpo-histo img/lena.png 3 gauss 0.1
-
 mkdir:
 	@test -d $(OUTDIR) || mkdir $(OUTDIR)
 
@@ -64,7 +59,7 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -o$@ $< 
 
 # do not look for files called clean, clean-all or *.check this will be always a target
-.PHONY : all debug clean run
+.PHONY : all debug clean
 
 clean:
 	rm -rf *.o $(OUTDIR) *~ $(OBJDIR)

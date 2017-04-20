@@ -18,6 +18,7 @@ public:
     void pixel(int x, int y, uint8_t val);
     void scale_values(double factor);
     void show(const std::string winName) const;
+    void save(const std::string fileName) const;
 private:
     cv::Mat _data;
 };

@@ -64,3 +64,8 @@ void GrayscaleImage::show(const std::string winName) const
 {
     cv::imshow(winName, _data);
 }
+
+void GrayscaleImage::save(const std::string fileName) const
+{
+    cv::imwrite(fileName, _data);
+}

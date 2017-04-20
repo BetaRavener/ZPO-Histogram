@@ -9,9 +9,9 @@ void UndersampledHistogram::compute(const GrayscaleImage& img, GrayscaleImage* m
 {
     clear_data();
 
-    for (int y = 0; y <= img.height() - _step; y += _step)
+    for (int y = 0; y < img.height(); y += _step)
     {
-        for (int x = 0; x <= img.width() - _step; x += _step)
+        for (int x = 0; x < img.width(); x += _step)
         {
             _data[img.pixel(x,y)]++;
             _used_samples++;
