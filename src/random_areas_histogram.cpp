@@ -4,8 +4,8 @@
 #include <functional>
 #include <chrono>
 
-RandomAreasHistogram::RandomAreasHistogram(int numPixels, int areas) :
-    _numPixels(numPixels),
+RandomAreasHistogram::RandomAreasHistogram(int pixelPercent, int areas) :
+    _pixelPercent(pixelPercent),
     _areas(areas)
 {
 }
@@ -19,6 +19,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
 
     int width = img.width();
     int height = img.height();
+    int numPixels = (width * height * _pixelPercent) / 100;
     int pixel; // 1D pixel address
     int x, y;
     std::vector<int> hodnoty;
@@ -29,7 +30,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
     std::vector<int> heightEnd(_heightAreas, 0);
 
     int numAreas = _widthAreas * _heightAreas;
-    int imgNumPixels = _numPixels / numAreas;
+    int imgNumPixels = numPixels / numAreas;
     std::vector<int> areaRange(numAreas, 0);
 
     double widthPart = (double)(width - 1) / (double)_widthAreas;
@@ -119,7 +120,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
             //auto rand_num = std::bind(std::uniform_int_distribution<int>(0, areaNumPixels - 1), std::mt19937(seed));
             //std::default_random_engine generator;
             //std::uniform_int_distribution<int> distribution(0, areaNumPixels - 1);
-            imgNumPixels = (int)llround(((double)areaRange[i * _widthAreas + j] / (double)totalRange) * _numPixels);
+            imgNumPixels = (int)llround(((double)areaRange[i * _widthAreas + j] / (double)totalRange) * numPixels);
             for(int k = 0; k < imgNumPixels; k++)
             {
                 //pixel = distribution(generator);
@@ -145,6 +146,6 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
 std::string RandomAreasHistogram::to_string(bool with_params) const
 {
     return "Random Areas" +
-            (with_params ? (" (" + std::to_string(_numPixels) + ", " +
+            (with_params ? (" (" + std::to_string(_pixelPercent) + ", " +
             std::to_string(_areas) + ")") : "");
 }

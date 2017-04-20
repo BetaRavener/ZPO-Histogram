@@ -3,8 +3,8 @@
 #include <iostream>
 #include <functional>
 
-NearestNeighbourHistogram::NearestNeighbourHistogram(int numPixels) :
-    _numPixels(numPixels)
+NearestNeighbourHistogram::NearestNeighbourHistogram(int pixelPercent) :
+    _pixelPercent(pixelPercent)
 {
 }
 
@@ -14,13 +14,14 @@ void NearestNeighbourHistogram::compute(const GrayscaleImage& img, GrayscaleImag
 
     int width = img.width();
     int height = img.height();
+    int numPixels = (width * height * _pixelPercent) / 100;
     int x, y;
     std::vector<int> hodnoty;
 
     double aspect = (double)width / (double)height;
     
-    int newHeight =(int)llround(sqrt(_numPixels/aspect));
-    int newWidth = (int)llround(aspect * sqrt(_numPixels/aspect));
+    int newHeight =(int)llround(sqrt(numPixels/aspect));
+    int newWidth = (int)llround(aspect * sqrt(numPixels/aspect));
 
     double x_ratio = (double)width/(double)newWidth;
     double y_ratio = (double)height/(double)newHeight;
@@ -45,5 +46,5 @@ void NearestNeighbourHistogram::compute(const GrayscaleImage& img, GrayscaleImag
 std::string NearestNeighbourHistogram::to_string(bool with_params) const
 {
     return "Nearest Neighbour" + (with_params ?
-            (" (" + std::to_string(_numPixels) + ")") : "");
+            (" (" + std::to_string(_pixelPercent) + ")") : "");
 }

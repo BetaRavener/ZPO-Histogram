@@ -3,8 +3,8 @@
 #include <iostream>
 #include <functional>
 
-RandomSamplingHistogram::RandomSamplingHistogram(int numPixels) :
-    _numPixels(numPixels)
+RandomSamplingHistogram::RandomSamplingHistogram(int pixelPercent) :
+    _pixelPercent(pixelPercent)
 {
 }
 
@@ -13,6 +13,7 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
     clear_data();
 
     int imgNumPixels = img.pixel_count();
+    int numPixels = (imgNumPixels * _pixelPercent) / 100;
     int width = img.width();
     int pixel; // 1D pixel address
     int x, y;
@@ -22,7 +23,7 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
     std::mt19937::result_type seed = time(0);
     auto rand_num = std::bind(std::uniform_int_distribution<int>(0, imgNumPixels - 1), std::mt19937(seed));
 
-    for(int i = 0; i < _numPixels; i++)
+    for(int i = 0; i < numPixels; i++)
     {
         //pixel = distribution(generator);
         pixel = rand_num();
@@ -43,5 +44,5 @@ void RandomSamplingHistogram::compute(const GrayscaleImage& img, GrayscaleImage*
 std::string RandomSamplingHistogram::to_string(bool with_params) const
 {
     return "Random Sampling" + (with_params ?
-            (" (" + std::to_string(_numPixels) + ")") : "");
+            (" (" + std::to_string(_pixelPercent) + ")") : "");
 }

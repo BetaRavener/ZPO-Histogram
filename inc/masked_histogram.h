@@ -7,13 +7,13 @@
 class MaskedHistogram : public HistogramBase
 {
   public:
-      MaskedHistogram(int step=2);
+      MaskedHistogram(int maskIdx=2);
       virtual ~MaskedHistogram() = default;
   
       virtual void compute(const GrayscaleImage& img, GrayscaleImage* mark_img=nullptr);
       virtual std::string to_string(bool with_params=false) const;
   private:
-      int _step;
+      int _maskIdx;
 };
 
 #endif

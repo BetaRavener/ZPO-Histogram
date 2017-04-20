@@ -217,7 +217,76 @@ void all_methods(std::vector<std::string> params)
             experiment.method = Evaluator::Methods::Downsample;
             break;
         }
-        case 1:{ // Cross method
+        case 1:{ // Circle method
+            experiment.params.resize(1);
+            auto& param1 = experiment.params[0];
+            for (int i = 1; i <= 5; i++) {
+                param.i = i;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Circle;
+            break;
+        }
+        case 2:{ // Chess method
+            experiment.params.resize(1);
+            auto& param1 = experiment.params[0];
+            for (int i = 1; i <= 5; i++) {
+                param.i = i;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Chess;
+            break;
+        }
+        case 3:{ // Masked method
+            experiment.params.resize(1);
+            auto& param1 = experiment.params[0];
+            for (int i = 0; i < 5; i++) {
+                param.i = i;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Masked;
+            break;
+        }
+        case 4:{ // Random method
+            experiment.params.resize(1);
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {70,50,40,30,20,10};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Random;
+            break;
+        }
+        case 5:{ // Neighbour method
+            experiment.params.resize(1);
+            auto& param1 = experiment.params[0];
+            std::vector<int> values = {50,40,30,20,10};
+            for (auto val : values) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::Neighbour;
+            break;
+        }
+        case 6:{ // Random Areas method
+            experiment.params.resize(2);
+            auto& param1 = experiment.params[0];
+            auto& param2 = experiment.params[1];
+            std::vector<int> values1 = {50,40,30,20,10};
+            std::vector<int> values2 = {3,5,7,9};
+            for (auto val : values1) {
+                param.i = val;
+                param1.push_back(param);
+            }
+            for (auto val : values2) {
+                param.i = val;
+                param2.push_back(param);
+            }
+            experiment.method = Evaluator::Methods::RandomAreas;
+            break;
+        }
+        case 7:{ // Cross method
             experiment.params.resize(2);
             auto& thresholds = experiment.params[0];
             auto& areas = experiment.params[1];
@@ -232,71 +301,6 @@ void all_methods(std::vector<std::string> params)
                 areas.push_back(param);
             }
             experiment.method = Evaluator::Methods::Cross;
-            break;
-        }
-        case 2:{ // Circle method
-            experiment.params.resize(1);
-            //TODO: Fill interesting param values
-            auto& param1 = experiment.params[0];
-            std::vector<int> values = {1,2,3};
-            for (auto val : values) {
-                param.i = val;
-                param1.push_back(param);
-            }
-            experiment.method = Evaluator::Methods::Circle;
-            break;
-        }
-        case 3:{ // Chess method
-            experiment.params.resize(1);
-            //TODO: Fill interesting param values
-            auto& param1 = experiment.params[0];
-            std::vector<int> values = {1,2,3};
-            for (auto val : values) {
-                param.i = val;
-                param1.push_back(param);
-            }
-            experiment.method = Evaluator::Methods::Chess;
-            break;
-        }
-        case 4:{ // Masked method
-            experiment.params.resize(1);
-            //TODO: Fill interesting param values
-            auto& param1 = experiment.params[0];
-            std::vector<int> values = {1,2,3};
-            for (auto val : values) {
-                param.i = val;
-                param1.push_back(param);
-            }
-            experiment.method = Evaluator::Methods::Masked;
-            break;
-        }
-        case 5:{ // Random method
-            experiment.params.resize(1);
-            //TODO: Fill interesting param values
-            auto& param1 = experiment.params[0];
-            std::vector<int> values = {1,2,3};
-            for (auto val : values) {
-                param.i = val;
-                param1.push_back(param);
-            }
-            experiment.method = Evaluator::Methods::Random;
-            break;
-        }
-        case 6:{ // Neighbour method
-            experiment.params.resize(1);
-            //TODO: Fill interesting param values
-            auto& param1 = experiment.params[0];
-            std::vector<int> values = {1,2,3};
-            for (auto val : values) {
-                param.i = val;
-                param1.push_back(param);
-            }
-            experiment.method = Evaluator::Methods::Neighbour;
-            break;
-        }
-        case 7:{ // Random Areas method
-            //TODO: Somehow do experiment
-            experiment.method = Evaluator::Methods::RandomAreas;
             break;
         }
         }
