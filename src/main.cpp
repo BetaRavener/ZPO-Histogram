@@ -248,7 +248,7 @@ void all_methods(std::vector<std::string> params)
         case 4:{ // Random method
             experiment.params.resize(1);
             auto& param1 = experiment.params[0];
-            std::vector<int> values = {70,50,40,30,20,10};
+            std::vector<int> values = {50,40,30,20,10};
             for (auto val : values) {
                 param.i = val;
                 param1.push_back(param);
@@ -305,37 +305,6 @@ void all_methods(std::vector<std::string> params)
         Evaluator::do_experiment(experiment, filenames, full_histograms);
         Evaluator::print_experiment(output, experiment, scores);
     }
-
-//
-//    Experiment experiment;
-//    experiment.params.resize(2);
-//    experiment.method = Evaluator::Methods::Cross;
-//    auto& thresholds = experiment.params[0];
-//    auto& areas = experiment.params[1];
-//    std::vector<int> threshold_values = {40,60,80,100,120};
-//    std::vector<int> area_values = {0,100,400,800,1600};
-//    for (auto val : threshold_values) {
-//        param.i = val;
-//        thresholds.push_back(param);
-//    }
-//    for (auto val : area_values) {
-//        param.i = val;
-//        areas.push_back(param);
-//    }
-//
-//    for (size_t i = 0; i < 25; i++)
-//    {
-//        ExperimentResult res;
-//        res.min_SSD = 0;
-//        res.max_SSD = i;
-//        res.median_SSD = 0.555555555555e-5;
-//        res.min_score = 5;
-//        res.max_score = 10;
-//        res.median_score = 7.5;
-//        experiment.results.push_back(res);
-//    }
-//
-//    Evaluator::print_experiment(output, experiment, scores);
 }
 
 void one_method(std::vector<std::string> params)
