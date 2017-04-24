@@ -179,9 +179,16 @@ void all_methods(std::vector<std::string> params)
     }
 
     ParamType param;
+    std::vector<cv::String> cv_filenames;
     std::vector<std::string> filenames;
-    cv::glob(params[0], filenames);
-    //filenames=std::vector<std::string>{"img/lena.png"};
+    cv::glob(params[0], cv_filenames);
+    if (cv_filenames.size() == 0)
+        throw std::invalid_argument("Image directory is empty.");
+
+    // Convert filenames to standard strings
+    for (auto& cv_filename : cv_filenames)
+        filenames.push_back(std::string(cv_filename.c_str()));
+
     std::vector<FullHistogram> full_histograms;
 
     bool use_file = params[1] != "-";
@@ -189,8 +196,6 @@ void all_methods(std::vector<std::string> params)
     if (use_file)
         out_file.open(params[1]);
     std::ostream& output = use_file ? out_file : std::cout;
-
-
 
     // Prepare full histograms for each image
     for (auto& filename : filenames) {
@@ -314,10 +319,15 @@ void one_method(std::vector<std::string> params)
     if (params.size() < 2)
        throw std::invalid_argument("Missing output file parameter.");
 
+    std::vector<cv::String> cv_filenames;
     std::vector<std::string> filenames;
-    cv::glob(params[0], filenames);
-    if (filenames.size() == 0)
+    cv::glob(params[0], cv_filenames);
+    if (cv_filenames.size() == 0)
         throw std::invalid_argument("Image directory is empty.");
+
+    // Convert filenames to standard strings
+    for (auto& cv_filename : cv_filenames)
+        filenames.push_back(std::string(cv_filename.c_str()));
 
     FullHistogram full_hist;
     auto other_hist = args_to_class(std::vector<std::string>(params.begin()+2, params.end()));
