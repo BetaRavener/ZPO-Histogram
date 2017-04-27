@@ -19,7 +19,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
 
     int width = img.width();
     int height = img.height();
-    int numPixels = (width * height * _pixelPercent) / 100;
+    int numPixels = (width * height * _pixelPercent) / 200;
     int pixel; // 1D pixel address
     int x, y;
     std::vector<int> hodnoty;
@@ -33,11 +33,14 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
     int imgNumPixels = numPixels / numAreas;
     std::vector<int> areaRange(numAreas, 0);
 
-    double widthPart = (double)(width - 1) / (double)_widthAreas;
-    double heightPart = (double)(height - 1) / (double)_heightAreas;
+    double widthPart = (double)(width) / (double)_widthAreas;
+    double heightPart = (double)(height) / (double)_heightAreas;
 
+    double obl_hist[HistogramBase::size];
+    const int minRange = 5; // minimalny rozsah
 
     for(int i = 0; i < _widthAreas; i++)
+
     {
         if(i == 0)
         {
@@ -60,7 +63,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
         }
         else
         {
-            heightStart[i] = heightStart[i - 1];
+            heightStart[i] = heightEnd[i - 1];
             heightEnd[i] = (int)llround(heightPart * (i + 1));
         }
     }
@@ -89,12 +92,16 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
                 x = (pixel % width) + widthStart[j];
                 
                 pixVal = img.pixel(x,y);
+                _used_samples++;
                 if(pixVal < min)
                     min = pixVal;
                 if(pixVal > max)
                     max = pixVal;
             }
             areaRange[i * _widthAreas + j] = max - min;
+            // ak je rozsah 0, nastavi nenulovy rozsah
+            if (areaRange[i * _widthAreas + j] < minRange)
+                areaRange[i * _widthAreas + j] = minRange;
         }
     }
 
@@ -112,6 +119,11 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
             height = heightEnd[i] - heightStart[i];
             areaNumPixels = width * height;
 
+            for (int i = 0; i < HistogramBase::size; i++)
+            { // vynulovanie oblastného histogramu
+                obl_hist[i] = 0.0;
+            }
+
             auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
             auto rand_num = std::bind(std::uniform_int_distribution<int>(0, areaNumPixels - 1), std::mt19937(seed));
 
@@ -121,6 +133,7 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
             //std::default_random_engine generator;
             //std::uniform_int_distribution<int> distribution(0, areaNumPixels - 1);
             imgNumPixels = (int)llround(((double)areaRange[i * _widthAreas + j] / (double)totalRange) * numPixels);
+            //std::cout << "area: "<< i << " x "<< j << " range: " << areaRange[i * _widthAreas + j] << " numPixels used: " << imgNumPixels << std::endl;
             for(int k = 0; k < imgNumPixels; k++)
             {
                 //pixel = distribution(generator);
@@ -130,17 +143,24 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
                 x = (pixel % width) + widthStart[j];
 
                 _used_samples++;
-                _data[img.pixel(x,y)]++;
+                obl_hist[img.pixel(x,y)]++;
                 if (mark_img != nullptr)
                     mark_img->pixel(x,y, 255);
+            }
+
+            for (int i = 0; i < HistogramBase::size; i++)
+            { // celkový histogram += (hist obl / použité px oblasti) * všetky px oblasti;
+                _data[i] += (obl_hist[i] / imgNumPixels) * areaNumPixels;
             }
         }
     }
 
-
      // Normalize histogram
     for (int i = 0; i < size; i++)
-        _data[i] /= _used_samples;
+    {// celkový histogram / počet všetkých px obrázku;
+        _data[i] /= img.pixel_count();
+    }
+        
 }
 
 std::string RandomAreasHistogram::to_string(bool with_params) const

@@ -29,8 +29,9 @@ void MaskedHistogram::compute(const GrayscaleImage& img, GrayscaleImage* mark_im
     masks.push_back(vector<int>({0, 3,2,3, 2,1,2, 3,2,3}));
     masks.push_back(vector<int>({0, 2,3,2, 3,1,3, 2,3,2}));
     masks.push_back(vector<int>({0, 3,1,3, 1,2,1, 3,1,3}));
-    masks.push_back(vector<int>({0, 1,1,1, 1,1,1, 1,1,1}));
     masks.push_back(vector<int>({0, 2,2,2, 2,2,2, 2,2,2}));
+    masks.push_back(vector<int>({0, 3,3,3, 3,3,3, 3,3,3}));
+
     int index = 1;
     int innerStep = 0;
 

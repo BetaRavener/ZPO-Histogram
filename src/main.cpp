@@ -223,7 +223,7 @@ void all_methods(std::vector<std::string> params)
         case 1:{ // Circle method
             experiment.params.resize(1);
             auto& param1 = experiment.params[0];
-            for (int i = 1; i <= 5; i++) {
+            for (int i = 2; i <= 6; i++) {
                 param.i = i;
                 param1.push_back(param);
             }
@@ -233,7 +233,7 @@ void all_methods(std::vector<std::string> params)
         case 2:{ // Chess method
             experiment.params.resize(1);
             auto& param1 = experiment.params[0];
-            for (int i = 1; i <= 5; i++) {
+            for (int i = 2; i <= 6; i++) {
                 param.i = i;
                 param1.push_back(param);
             }
@@ -253,7 +253,7 @@ void all_methods(std::vector<std::string> params)
         case 4:{ // Random method
             experiment.params.resize(1);
             auto& param1 = experiment.params[0];
-            std::vector<int> values = {50,40,30,20,10};
+            std::vector<int> values = {25,20,15,10,5,3};
             for (auto val : values) {
                 param.i = val;
                 param1.push_back(param);
@@ -264,7 +264,7 @@ void all_methods(std::vector<std::string> params)
         case 5:{ // Neighbour method
             experiment.params.resize(1);
             auto& param1 = experiment.params[0];
-            std::vector<int> values = {50,40,30,20,10};
+            std::vector<int> values = {25,20,15,10,5,3};
             for (auto val : values) {
                 param.i = val;
                 param1.push_back(param);
@@ -276,8 +276,8 @@ void all_methods(std::vector<std::string> params)
             experiment.params.resize(2);
             auto& param1 = experiment.params[0];
             auto& param2 = experiment.params[1];
-            std::vector<int> values1 = {50,40,30,20,10};
-            std::vector<int> values2 = {3,5,7,9};
+            std::vector<int> values1 = {25,15,10,5,3};
+            std::vector<int> values2 = {5,9,13,17,23};
             for (auto val : values1) {
                 param.i = val;
                 param1.push_back(param);
