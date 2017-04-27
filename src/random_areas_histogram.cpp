@@ -133,7 +133,6 @@ void RandomAreasHistogram::compute(const GrayscaleImage& img, GrayscaleImage* ma
             //std::default_random_engine generator;
             //std::uniform_int_distribution<int> distribution(0, areaNumPixels - 1);
             imgNumPixels = (int)llround(((double)areaRange[i * _widthAreas + j] / (double)totalRange) * numPixels);
-            //std::cout << "area: "<< i << " x "<< j << " range: " << areaRange[i * _widthAreas + j] << " numPixels used: " << imgNumPixels << std::endl;
             for(int k = 0; k < imgNumPixels; k++)
             {
                 //pixel = distribution(generator);
